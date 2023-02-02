@@ -12,6 +12,7 @@ class ConfigClass(object):
     }
     JWT_SECRET_KEY = os.environ.get('JWT_SECRET')
     JWT_ACCESS_TOKEN_EXPIRES= datetime.timedelta(days=1)
+    SECRET_KEY=os.environ.get('SECRET_KEY')
 
     def create_collection(coll_name, schema):
         client = MongoClient(os.environ.get('MONGO_URI'))

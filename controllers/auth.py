@@ -1,9 +1,10 @@
-from flask import request, jsonify
+from flask import request, jsonify, session
 import hashlib
 from flask_jwt_extended import create_access_token
 from pymongo import MongoClient
 import os
 from dotenv import load_dotenv
+from models import User
 
 load_dotenv()
 
@@ -48,5 +49,30 @@ def login():
                 return jsonify({"msg": "Password is incorrect"})
         else:
             return jsonify({"msg": "User does not exist"}), 404
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def verifyOTP():
+    try:
+        rec_email = request.get_json()['email']
+
+        current_otp = User.sendEmailVerificationRequest(receiver=rec_email)
+        session['current_otp'] = current_otp
+        return jsonify({'msg': 'OTP sent successfully!'}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+def validateOTP():
+    try:
+        # Actual OTP
+        current_otp = session['current_otp']
+
+        # OTP entered by the user
+        user_otp = request.get_json()['otp']
+
+        if int(user_otp) == int(current_otp):
+            return jsonify({'msg': "Your email has been verified successfully!"}), 200
+        else:
+            return jsonify({'msg': 'Oops! Email Verification Failure, OTP does not match.'}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
