@@ -34,6 +34,9 @@ class User:
                     },
                     'state': {
                         'bsonType': 'string'
+                    },
+                    'country': {
+                        'bsonType': 'string'
                     }
                 }
             }
